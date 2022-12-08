@@ -1,9 +1,10 @@
 // RemoteXY select connection mode and include library
 #define REMOTEXY_MODE__ESP32CORE_WIFI_CLOUD
-#include <WiFi.h>
-#include <OneWire.h>
-#include <DallasTemperature.h>
-#include <RemoteXY.h>
+// include the libraries 
+#include <WiFi.h> // for wifi
+#include <OneWire.h> // for temp 
+#include <DallasTemperature.h>  // for temp
+#include <RemoteXY.h>  // for the app
 
 
 // RemoteXY connection settings 
@@ -56,11 +57,11 @@ struct {
 
 
 
-OneWire oneWire(SENSOR_PIN);
-DallasTemperature DS18B20(&oneWire);
+OneWire oneWire(SENSOR_PIN); // temp pin
+DallasTemperature DS18B20(&oneWire); // temp pin
 
 float moisture_sensor_pin = 35;
-float soil_moisture;
+float soil_moisture; // variable
 float tempC;  // temperature in Celsius
 
 
@@ -121,11 +122,13 @@ void loop() {
   RemoteXY.Graph_co2ppm = co2ppm;
   RemoteXY.Graph_soil_moisture = soil_moisture;
   RemoteXY.Graph_tempC = tempC;
+  
+  // text settings
   dtostrf(tempC, 0, 2, RemoteXY.T);     
   dtostrf(soil_moisture, 0, 2, RemoteXY.M);  
   dtostrf(co2ppm, 0, 2, RemoteXY.C);      +
   
-
+   // selection setting
    if (RemoteXY.S==0) {
 strcpy  (RemoteXY.ST1, "↑CO2 -->");   
 strcpy  (RemoteXY.ST2, " ↑T & ↓M");   
@@ -141,8 +144,4 @@ strcpy  (RemoteXY.ST1, "↓CO2--> ");
 strcpy  (RemoteXY.ST2, "↓T & ↑M ");       
     /*  current position C */
   }  
-
-  // TODO you loop code
-  // use the RemoteXY structure for data transfer
-  // do not call delay()
 }
