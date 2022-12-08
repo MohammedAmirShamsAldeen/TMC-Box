@@ -1,5 +1,7 @@
 // RemoteXY select connection mode and include library
 #define REMOTEXY_MODE__ESP32CORE_WIFI_CLOUD
+
+// the libraries 
 #include <WiFi.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
@@ -12,11 +14,10 @@
 #define REMOTEXY_CLOUD_SERVER "cloud.remotexy.com"
 #define REMOTEXY_CLOUD_PORT 6376
 #define REMOTEXY_CLOUD_TOKEN "c13a2f0c1a18149c8004f51e59704c9a"
+// pins of the sensors 
 #define SENSOR_PIN 21  // ESP32 pin GIOP21 connected to DS18B20 sensor's DQ pin
 #define anInput 34     //analog feed from MQ135
 #define co2Zero 55     //calibrated CO2 0 level
-
-
 // RemoteXY configurate  
 #pragma pack(push, 1)
 uint8_t RemoteXY_CONF[] =   // 131 bytes
@@ -42,8 +43,7 @@ struct {
   char T[11];  // string UTF8 end zero 
   char M[11];  // string UTF8 end zero 
   char ST1[251];  // string UTF8 end zero 
-  char ST2[251];  // string UTF8 end zero 
-
+  char ST2[251];
     // other variable
   uint8_t connect_flag;  // =1 if wire connected, else =0 
 
@@ -53,12 +53,10 @@ struct {
 /////////////////////////////////////////////
 //           END RemoteXY include          //
 /////////////////////////////////////////////
-
-
-
+// pins of the Temp.
 OneWire oneWire(SENSOR_PIN);
 DallasTemperature DS18B20(&oneWire);
-
+// pin + variable
 float moisture_sensor_pin = 35;
 float soil_moisture;
 float tempC;  // temperature in Celsius
@@ -93,11 +91,11 @@ void loop() {
     X = X + co2now[x];
   }
   co2raw = X / 10;            //divide samples by 10
-  co2ppm = co2raw - co2Zero;  //get calculated ppm
-  co2ppm = map(co2ppm, 1150, 1810, 100, 0);
+  co2ppm = co2raw - co2Zero;  //get calculated %
+  co2ppm = map(co2ppm, 1150, 2050, 100, 0);
   Serial.print("CO2 CONC. =");
   Serial.print(co2ppm);  // prints the value read
-  Serial.println(" ppm");
+  Serial.println(" %");
   // co2 ended
 
 
@@ -117,32 +115,31 @@ void loop() {
   Serial.print(soil_moisture);
   Serial.println(" %");
   //Soil Moisture Code End
+  
   // codes for the communication
   RemoteXY.Graph_co2ppm = co2ppm;
   RemoteXY.Graph_soil_moisture = soil_moisture;
   RemoteXY.Graph_tempC = tempC;
+  
   dtostrf(tempC, 0, 2, RemoteXY.T);     
   dtostrf(soil_moisture, 0, 2, RemoteXY.M);  
-  dtostrf(co2ppm, 0, 2, RemoteXY.C);      +
+  dtostrf(co2ppm, 0, 2, RemoteXY.C);      
   
 
-   if (RemoteXY.S==0) {
-strcpy  (RemoteXY.ST1, "↑CO2 -->");   
-strcpy  (RemoteXY.ST2, " ↑T & ↓M");   
+  if (RemoteXY.S==0) {
+    strcpy  (RemoteXY.ST1, "↑CO2 -->");   
+    strcpy  (RemoteXY.ST2, " ↑T & ↓M");     
     /*  current position A */
   }
   else if (RemoteXY.S==1) {
-    strcpy  (RemoteXY.ST1, "stable CO2--> "); 
-    strcpy  (RemoteXY.ST2, " stable T & M");   
+        strcpy  (RemoteXY.ST1, "stable CO2--> "); 
+        strcpy  (RemoteXY.ST2, " stable T & M");    
     /*  current position B */
   }
   else if (RemoteXY.S==2) {
-strcpy  (RemoteXY.ST1, "↓CO2--> ");  
-strcpy  (RemoteXY.ST2, "↓T & ↑M ");       
-    /*  current position C */
+    strcpy  (RemoteXY.ST1, "↓CO2--> ");  
+    strcpy  (RemoteXY.ST2, "↓T & ↑M ");      /*  current position C */
   }  
 
-  // TODO you loop code
-  // use the RemoteXY structure for data transfer
-  // do not call delay()
+
 }
