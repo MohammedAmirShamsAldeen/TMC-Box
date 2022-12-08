@@ -1,11 +1,19 @@
 // RemoteXY select connection mode and include library
 #define REMOTEXY_MODE__ESP32CORE_WIFI_CLOUD
+<<<<<<< HEAD
 
 // the libraries 
 #include <WiFi.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <RemoteXY.h>
+=======
+// include the libraries 
+#include <WiFi.h> // for wifi
+#include <OneWire.h> // for temp 
+#include <DallasTemperature.h>  // for temp
+#include <RemoteXY.h>  // for the app
+>>>>>>> 55ffc685c8cf1c17294aa5ca517f9c412849e5d8
 
 
 // RemoteXY connection settings 
@@ -53,12 +61,21 @@ struct {
 /////////////////////////////////////////////
 //           END RemoteXY include          //
 /////////////////////////////////////////////
+<<<<<<< HEAD
 // pins of the Temp.
 OneWire oneWire(SENSOR_PIN);
 DallasTemperature DS18B20(&oneWire);
 // pin + variable
+=======
+
+
+
+OneWire oneWire(SENSOR_PIN); // temp pin
+DallasTemperature DS18B20(&oneWire); // temp pin
+
+>>>>>>> 55ffc685c8cf1c17294aa5ca517f9c412849e5d8
 float moisture_sensor_pin = 35;
-float soil_moisture;
+float soil_moisture; // variable
 float tempC;  // temperature in Celsius
 
 
@@ -121,14 +138,25 @@ void loop() {
   RemoteXY.Graph_soil_moisture = soil_moisture;
   RemoteXY.Graph_tempC = tempC;
   
+<<<<<<< HEAD
+=======
+  // text settings
+>>>>>>> 55ffc685c8cf1c17294aa5ca517f9c412849e5d8
   dtostrf(tempC, 0, 2, RemoteXY.T);     
   dtostrf(soil_moisture, 0, 2, RemoteXY.M);  
   dtostrf(co2ppm, 0, 2, RemoteXY.C);      
   
+<<<<<<< HEAD
 
   if (RemoteXY.S==0) {
     strcpy  (RemoteXY.ST1, "↑CO2 -->");   
     strcpy  (RemoteXY.ST2, " ↑T & ↓M");     
+=======
+   // selection setting
+   if (RemoteXY.S==0) {
+strcpy  (RemoteXY.ST1, "↑CO2 -->");   
+strcpy  (RemoteXY.ST2, " ↑T & ↓M");   
+>>>>>>> 55ffc685c8cf1c17294aa5ca517f9c412849e5d8
     /*  current position A */
   }
   else if (RemoteXY.S==1) {
@@ -140,6 +168,10 @@ void loop() {
     strcpy  (RemoteXY.ST1, "↓CO2--> ");  
     strcpy  (RemoteXY.ST2, "↓T & ↑M ");      /*  current position C */
   }  
+<<<<<<< HEAD
 
 
 }
+=======
+}
+>>>>>>> 55ffc685c8cf1c17294aa5ca517f9c412849e5d8
