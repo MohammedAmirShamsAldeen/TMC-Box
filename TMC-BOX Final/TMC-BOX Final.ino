@@ -7,17 +7,18 @@
 #include <DallasTemperature.h>
 #include <RemoteXY.h>
 
-
 // RemoteXY connection settings 
 #define REMOTEXY_WIFI_SSID "Mo Amir"
 #define REMOTEXY_WIFI_PASSWORD "pass@2062"
 #define REMOTEXY_CLOUD_SERVER "cloud.remotexy.com"
 #define REMOTEXY_CLOUD_PORT 6376
 #define REMOTEXY_CLOUD_TOKEN "c13a2f0c1a18149c8004f51e59704c9a"
+
 // pins of the sensors 
 #define SENSOR_PIN 21  // ESP32 pin GIOP21 connected to DS18B20 sensor's DQ pin
 #define anInput 34     //analog feed from MQ135
 #define co2Zero 55     //calibrated CO2 0 level
+
 // RemoteXY configurate  
 #pragma pack(push, 1)
 uint8_t RemoteXY_CONF[] =   // 131 bytes
@@ -26,8 +27,8 @@ uint8_t RemoteXY_CONF[] =   // 131 bytes
   40,55,19,6,228,16,11,67,5,40,62,19,6,228,16,11,67,5,40,69,
   19,6,228,16,11,129,0,8,55,24,6,17,67,79,50,0,129,0,6,62,
   24,6,17,84,101,109,112,46,0,129,0,3,69,24,6,17,77,111,105,115,
-  116,117,114,101,0,3,3,2,76,8,21,134,0,67,5,12,77,49,9,228,
-  16,251,67,5,12,86,49,9,228,16,251 };
+  116,117,114,101,0,3,3,3,75,8,22,134,0,67,5,13,76,48,10,228,
+  16,251,67,5,13,86,48,10,228,16,251 };
   
 // this structure defines all the variables and events of your control interface 
 struct {
@@ -56,12 +57,11 @@ struct {
 // pins of the Temp.
 OneWire oneWire(SENSOR_PIN);
 DallasTemperature DS18B20(&oneWire);
+
 // pin + variable
 float moisture_sensor_pin = 35;
 float soil_moisture;
 float tempC;  // temperature in Celsius
-
-
 
 void setup() {
   RemoteXY_Init();
@@ -69,7 +69,6 @@ void setup() {
   Serial.begin(9600);       //serial comms for debuging
   DS18B20.begin();          // initialize the DS18B20 sensor
 }
-
 
 void loop() {
   RemoteXY_Handler();
@@ -95,7 +94,6 @@ void loop() {
   Serial.println(" %");
   // co2 ended
 
-
   // Temp starts
   DS18B20.requestTemperatures();       // send the command to get temperatures
   tempC = DS18B20.getTempCByIndex(0);  // read temperature in °C
@@ -103,7 +101,6 @@ void loop() {
   Serial.print(tempC);  // print the temperature in °C
   Serial.print("°C");
   // Temp ended
-
 
   //Soil Moisture Code Start
   soil_moisture = ((analogRead(moisture_sensor_pin) / -1) + 4095) / 100;  //Soil Moisture calibration
@@ -117,12 +114,12 @@ void loop() {
   RemoteXY.Graph_co2ppm = co2ppm;
   RemoteXY.Graph_soil_moisture = soil_moisture;
   RemoteXY.Graph_tempC = tempC;
-  
+ // Codes for text of each sensor 
   dtostrf(tempC, 0, 2, RemoteXY.T);     
   dtostrf(soil_moisture, 0, 2, RemoteXY.M);  
   dtostrf(co2ppm, 0, 2, RemoteXY.C);      
   
-
+ // codes for the selection
   if (RemoteXY.S==0) {
     strcpy  (RemoteXY.ST1, "↑CO2 -->");   
     strcpy  (RemoteXY.ST2, " ↑T & ↓M");     
