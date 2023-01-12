@@ -105,17 +105,17 @@ void loop()
   }
   co2raw = X / 10;            //divide samples by 10
   co2ppm = co2raw - co2Zero;  //get calculated %
-  //co2ppm = map(co2ppm, 1816, 6 15000, 2000);
-  co2out = (co2ppm - 1455)/10;   
+  co2ppm = map(co2ppm, 800, 2000, 15000, 2000);
+  co2out = ((co2ppm - 1032)/10) + 337;   
   Serial.print("CO2 CONC. =");
   Serial.print(co2out);  // prints the value read
-  Serial.println(" *10 ppm ");
+  Serial.println(" ppm ");
   // co2 ended
 
   // Temp starts
   DS18B20.requestTemperatures();       // send the command to get temperatures
   tempC = DS18B20.getTempCByIndex(0);  // read temperature in °C
-  tempCC = tempC + 1; 
+  tempCC = tempC + 2; 
   Serial.print("Temperature: ");
   Serial.print(tempCC);  // print the temperature in °C
   Serial.print("°C");
@@ -123,7 +123,7 @@ void loop()
 
   //Soil Moisture Code Start
   soil_moisture = ((analogRead(moisture_sensor_pin) / -1) + 4095) / 100;  //Soil Moisture calibration
-  //soil_moisture = map(soil_moisture, 23, 10, 100, 0);
+  soil_moisture = map(soil_moisture, 23, 9, 100, 0);
   Serial.print("Soil Moisture Value : ");
   Serial.print(soil_moisture);
   Serial.println(" %");
@@ -132,9 +132,9 @@ void loop()
   // codes for the communication
   RemoteXY.Graph_co2ppm = co2out;
   RemoteXY.Graph_soil_moisture = soil_moisture;
-  RemoteXY.Graph_tempC = tempC;
+  RemoteXY.Graph_tempC = tempCC;
  // Codes for text of each sensor 
-  dtostrf(tempC, 0, 2, RemoteXY.T);     
+  dtostrf(tempCC, 0, 2, RemoteXY.T);     
   dtostrf(soil_moisture, 0, 2, RemoteXY.M);  
   dtostrf(co2out, 0, 2, RemoteXY.C);      
   
