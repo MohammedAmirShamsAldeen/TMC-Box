@@ -4,6 +4,7 @@
 
 // RemoteXY select connection mode and include library 
 #define REMOTEXY_MODE__ESP32CORE_WIFI_CLOUD
+
 #include <WiFi.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
@@ -47,7 +48,7 @@ struct {
   uint8_t S;                       // =0 if select position A, =1 if position B, =2 if position C, ... 
 
     // output variables
-  float Graph_co2ppm;           
+  float Graph_co2ppm;           // Graph of CO2
   float Graph_tempC;           // Graph of temperature 
   float Graph_soil_moisture;  // Graph of the Moisture
   char C[11];                // string UTF8 end zero 
