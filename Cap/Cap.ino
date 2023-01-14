@@ -51,12 +51,11 @@ struct {
   float Graph_co2ppm;           // Graph of CO2
   float Graph_tempC;           // Graph of temperature 
   float Graph_soil_moisture;  // Graph of the Moisture
-  char C[11];                // string UTF8 end zero 
-  char T[11];               // string UTF8 end zero 
-  char M[11];              // string UTF8 end zero 
-  char ST_1[251];         // string UTF8 end zero 
-  char ST_2[251];        // string UTF8 end zero
- 
+  char C[11];                // string 
+  char T[11];               // string 
+  char M[11];              // string 
+  char ST_1[251];         // string  
+  char ST_2[251];        // string 
 
     // other variable
   uint8_t connect_flag;  // =1 if wire connected, else =0 
@@ -73,11 +72,9 @@ OneWire oneWire(SENSOR_PIN);
 DallasTemperature DS18B20(&oneWire);
 
 
-float moisture_sensor_pin = 33;
-float co2out;            // Co2 after calibration
+float moisture_sensor_pin = 35;
 float soil_moisture;    // Moisture
 float tempC;           // temperature in Celsius
-float tempCC;         // temperature in Celsius
 
 
 void setup() 
@@ -106,39 +103,37 @@ void loop()
   }
   co2raw = X / 10;                                 //divide samples by 10
   co2ppm = co2raw - co2Zero;                      //get calculated %
-  co2ppm = map(co2ppm, 800, 2000, 15000, 2000);  // maping of the results
-  co2out = ((co2ppm - 1032)/10) + 337;          // equation of calibration
+  co2ppm = map(co2ppm, 800, 1650, 1070, 400);  // maping of the results
   Serial.print("CO2 CONC. =");
-  Serial.print(co2out);                       // prints the value read
+  Serial.print(co2ppm);                       // prints the value read
   Serial.println(" ppm ");
   // co2 ended
 
   // Temp starts
   DS18B20.requestTemperatures();        // send the command to get temperatures
   tempC = DS18B20.getTempCByIndex(0);  // read temperature in °C
-  tempCC = tempC + 2; 
   Serial.print("Temperature: ");
-  Serial.print(tempCC);             // print the temperature in °C
+  Serial.print(tempC);               // print the temperature in °C
   Serial.print("°C");
   // Temp ended
 
   //Soil Moisture Code Start
   soil_moisture = ((analogRead(moisture_sensor_pin) / -1) + 4095) / 100;  //Soil Moisture calibration
-  soil_moisture = map(soil_moisture, 23, 9, 100, 0);                     // maping of the results
+  soil_moisture = map(soil_moisture, 30, 10, 100, 0);                     // maping of the results
   Serial.print("Soil Moisture Value : ");
   Serial.print(soil_moisture);
   Serial.println(" %");
   //Soil Moisture Code End
 
   // codes for the Graph
-  RemoteXY.Graph_co2ppm = co2out;
+  RemoteXY.Graph_co2ppm = co2ppm;
   RemoteXY.Graph_soil_moisture = soil_moisture;
-  RemoteXY.Graph_tempC = tempCC;
+  RemoteXY.Graph_tempC = tempC;
 
  // Codes for text of each sensor 
-  dtostrf(tempCC, 0, 2, RemoteXY.T);     
+  dtostrf(tempC, 0, 2, RemoteXY.T);     
   dtostrf(soil_moisture, 0, 2, RemoteXY.M);  
-  dtostrf(co2out, 0, 2, RemoteXY.C);      
+  dtostrf(co2ppm, 0, 2, RemoteXY.C);      
   
  // codes for the selection
   if (RemoteXY.S==0) {
