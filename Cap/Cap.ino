@@ -72,7 +72,7 @@ OneWire oneWire(SENSOR_PIN);
 DallasTemperature DS18B20(&oneWire);
 
 
-float moisture_sensor_pin = 35;
+float moisture_sensor_pin = 32;
 float soil_moisture;    // Moisture
 float tempC;           // temperature in Celsius
 
@@ -119,7 +119,7 @@ void loop()
 
   //Soil Moisture Code Start
   soil_moisture = ((analogRead(moisture_sensor_pin) / -1) + 4095) / 100;  //Soil Moisture calibration
-  soil_moisture = map(soil_moisture, 30, 10, 100, 0);                     // maping of the results
+  soil_moisture = map(soil_moisture, 25, 10, 100, 0);                     // maping of the results
   Serial.print("Soil Moisture Value : ");
   Serial.print(soil_moisture);
   Serial.println(" %");
